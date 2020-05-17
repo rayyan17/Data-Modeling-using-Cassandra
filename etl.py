@@ -5,7 +5,8 @@ import os
 
 from cassandra.cluster import Cluster
 
-from nosql_queries import create_table_queries, insert_into_music_app, insert_into_top_songs, insert_into_user_song
+from nosql_queries import create_table_queries, insert_into_music_app, insert_into_top_songs, insert_into_user_song, \
+    drop_table_queries
 
 
 def get_file_paths():
@@ -75,6 +76,11 @@ def create_tables(session):
         session.execute(create_table)
 
 
+def drop_tables(session):
+    for drop_table in drop_table_queries:
+        session.execute(drop_table)
+
+
 def insert_into_tables(session):
     file = 'event_datafile_new.csv'
     with open(file, encoding='utf8') as f:
@@ -86,3 +92,19 @@ def insert_into_tables(session):
                                                     int(line[3]), int(line[10]), int(line[8])))
 
             session.execute(insert_into_top_songs, (line[9], line[1], line[4]))
+
+
+def main():
+    transform_multiple_files_to_single_file()
+    cluster, session = create_cassandra_cluster()
+
+    create_tables(session)
+    insert_into_tables(session)
+    drop_tables(session)
+
+    session.shutdown()
+    cluster.shutdown()
+
+
+if __name__ == '__main__':
+    main()
