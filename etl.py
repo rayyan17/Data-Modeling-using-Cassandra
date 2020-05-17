@@ -8,6 +8,7 @@ import numpy as np
 import json
 import csv
 from cassandra.cluster import Cluster
+from nosql_queries import create_table_queries
 
 
 def get_file_paths():
@@ -70,4 +71,9 @@ def create_cassandra_cluster():
     session.set_keyspace('udacity')
 
     return cluster, session
+
+
+def create_tables(session):
+    for create_table in create_table_queries:
+        session.execute(create_table)
 
