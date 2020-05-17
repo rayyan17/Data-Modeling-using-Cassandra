@@ -1,14 +1,11 @@
 """ETL Pipeline"""
-import pandas as pd
-import cassandra
-import re
-import os
-import glob
-import numpy as np
-import json
 import csv
+import glob
+import os
+
 from cassandra.cluster import Cluster
-from nosql_queries import create_table_queries
+
+from nosql_queries import create_table_queries, insert_into_music_app, insert_into_top_songs, insert_into_user_song
 
 
 def get_file_paths():
@@ -77,3 +74,15 @@ def create_tables(session):
     for create_table in create_table_queries:
         session.execute(create_table)
 
+
+def insert_into_tables(session):
+    file = 'event_datafile_new.csv'
+    with open(file, encoding='utf8') as f:
+        csvreader = csv.reader(f)
+        next(csvreader)  # skip header
+        for line in csvreader:
+            session.execute(insert_into_music_app, (line[0], line[9], float(line[5]), int(line[8]), int(line[3])))
+            session.execute(insert_into_user_song, (line[0], line[9], line[1], line[4],
+                                                    int(line[3]), int(line[10]), int(line[8])))
+
+            session.execute(insert_into_top_songs, (line[9], line[1], line[4]))
