@@ -30,6 +30,21 @@ drop_user_song_list = """DROP TABLE IF EXISTS user_song_list"""
 drop_top_song_users = """DROP TABLE IF EXISTS top_song_users"""
 
 
+# INSERT INTO TABLE QUERIES
+insert_into_music_app = """
+INSERT INTO music_app_history (artist, song, song_length, session_id, item_in_session) VALUES (%s, %s, %s, %s, %s)
+"""
+
+insert_into_user_song = """
+INSERT INTO user_song_list (artist, song, user_first_name, user_last_name, item_in_session, user_id, session_id) \
+VALUES (%s, %s, %s, %s, %s, %s, %s)
+"""
+
+insert_into_top_songs = """
+INSERT INTO top_song_users (song, user_first_name, user_last_name) VALUES (%s, %s, %s)
+"""
+
+
 drop_table_queries = [drop_music_app_history, drop_user_song_list, drop_top_song_users]
 create_table_queries = [create_music_app_history, create_user_song_list, create_top_song_users]
 
