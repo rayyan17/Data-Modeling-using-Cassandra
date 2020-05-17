@@ -7,6 +7,7 @@ import glob
 import numpy as np
 import json
 import csv
+from cassandra.cluster import Cluster
 
 
 def get_file_paths():
@@ -54,4 +55,19 @@ def transform_multiple_files_to_single_file():
             if row[0] == '':
                 continue
             writer.writerow((row[0], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[12], row[13], row[16]))
+
+
+def create_cassandra_cluster():
+
+    cluster = Cluster()
+    session = cluster.connect()
+
+    session.execute("""
+    CREATE KEYSPACE IF NOT EXISTS udacity 
+    WITH REPLICATION = 
+    { 'class' : 'SimpleStrategy', 'replication_factor' : 1 }""")
+
+    session.set_keyspace('udacity')
+
+    return cluster, session
 
